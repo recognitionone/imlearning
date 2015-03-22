@@ -399,7 +399,14 @@ function scene:create( event )
 	function stopGrowing()		
 			timer.performWithDelay(1, function ()
 				if myCircle ~= nil then
-					myCircle.bodyType = "dynamic"
+                                        myCircle.bodyType = "static"
+
+                                        local theCircle = myCircle
+                                        timer.performWithDelay(10,
+                                                               function ()
+                                                                  theCircle.bodyType = "dynamic"
+                                                               end, 1)
+
 					myCircle.gravityScale = 27
 					circlesGroup:insert(myCircle)		
 					sceneGroup:insert( myCircle )
