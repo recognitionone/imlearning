@@ -16,7 +16,7 @@ local scoreText = score.init({
 
 local levelText = level.init({
    x = display.contentCenterX,
-   y = -10,
+   y = -1000,
    maxDigits = 3,
    leadingZeros = false,
    filename = "levelfile.txt",
@@ -25,7 +25,7 @@ local levelText = level.init({
 
 local function onSceneTouch2( self, event )
 	if event.phase == "began" then		
-		composer.gotoScene( "scene2", "fade", 400  )		
+		composer.gotoScene( "scene2", "fade", 100  )		
 		return true
 	end
 end
@@ -49,7 +49,7 @@ function scene:create( event )
 
 	local options = {
 	   text = myText,
-	   x = _W/2-90,
+	   x = _W/2,
 	   y = _H/2+90,
 	   width = 320,
 	   height = 300,

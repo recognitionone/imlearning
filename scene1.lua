@@ -4,9 +4,10 @@ local score = require( "score" )
 
 local scoreText = score.init({
    x = display.contentCenterX,
-   y = -10,
+   y = -1000,
    maxDigits = 3,
    leadingZeros = false,
+   alpha = 0,
    filename = "scorefile.txt",
 })
 
@@ -15,7 +16,7 @@ local _H = display.contentHeight
 
 local function onSceneTouch( self, event )
 	if event.phase == "began" then		
-		composer.gotoScene( "scene2", "fade", 400  )		
+		composer.gotoScene( "scene2", "fade", 100  )		
 		return true
 	end
 end

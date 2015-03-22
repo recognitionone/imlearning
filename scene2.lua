@@ -27,7 +27,7 @@ physics.setContinuous(true)
 
 local scoreText = score.init({
    x = display.contentCenterX,
-   y = -10,
+   y = -1000,
    maxDigits = 3,
    leadingZeros = false,
    filename = "scorefile.txt",
@@ -69,7 +69,7 @@ local function gameover(self, event)
 			
 			composer.gotoScene( "scene3", {
 			effect = "fade",
-			time = 400,
+			time = 100,
 			params = {
 			numPoints = circles + lives
 			}
@@ -164,7 +164,7 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 		
-	background = display.newRect(_W/2, _H/2, _W, _H)
+	background = display.newRect(_W/2, _H/2, _W, _H*2)
 	background:setFillColor(0/255,137/255,166/255)
 	sceneGroup:insert( background )
 
@@ -183,8 +183,8 @@ function scene:create( event )
 	local params = {
 		{xpos = _W/2, ypos = -200, width = _W, height = 440},
 		{xpos = _W/2, ypos = _H+200, width = _W, height = 410},
-		{xpos = -200, ypos = _H/2, width = 410, height = _H},
-		{xpos = _W+200, ypos = _H/2, width = 410, height = _H},
+		{xpos = -200, ypos = _H/2, width = 390, height = _H},
+		{xpos = _W+200, ypos = _H/2, width = 390, height = _H},
 	}
 
 	local collection = {}
@@ -383,8 +383,8 @@ function scene:create( event )
 			if (myCircle.x > _W-myCircle.contentWidth/2) then
 				myCircle.x = _W-myCircle.contentWidth/2 - 1
 			end
-			if (myCircle.y < myCircle.contentWidth/2) then
-				myCircle.y = myCircle.contentWidth/2 + 1
+			if (myCircle.y < myCircle.contentWidth/2+20) then
+				myCircle.y = myCircle.contentWidth/2 + 21
 			end
 			if (myCircle.y > _H-myCircle.contentWidth/2) then
 				myCircle.y = _H-myCircle.contentWidth/2 - 1
