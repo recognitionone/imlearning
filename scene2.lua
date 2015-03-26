@@ -225,31 +225,21 @@ physics.setGravity(0, -1)
 			if ( event.phase == "began" ) then
 				if event.other.name == "myC" then
 					stopGrowing()
+					
 				else
-				
-					lives = lives - 1
-					myText.text = "Lives: "..lives
-					if myCircle == nil then
-						print("nil circle")
-					end
-					timer.performWithDelay(10, function()
-													if myCircle ~= nil then
-														myCircle:removeSelf()
-														myCircle = nil
-													end
-												end, 1)
+					stopGrowingAndDisappear()
+
 				end
 			end
 		end
 	end
 	
-	
+
 	function circleGenerator( event)		
 		if event.phase == "began" then		
 			
 			myCircle = display.newImageRect("circleblue.png", 10, 10, 10, 20)
-			
-						
+									
 			circlesGroup:insert(myCircle)
 			myCircle.collision = onLocalCollision	
 			myCircle:addEventListener( "collision", myCircle)		
@@ -398,7 +388,7 @@ physics.setGravity(0, -1)
 					circlesGroup:insert(myCircle)		
 					sceneGroup:insert( myCircle )
 					
-					circles = circles - 1
+					circles = circles-- - 1
 					circlesText.text = "Circles: "..circles
 					stopMakeItBiggerTimer()
 					
@@ -428,6 +418,56 @@ physics.setGravity(0, -1)
 				end
 			end, 1)		
 		end	
+			
+		function stopGrowingAndDisappear()		
+			timer.performWithDelay(1, function ()
+				if myCircle ~= nil then
+					myCircle.bodyType = "static"
+
+					local theCircle = myCircle
+					timer.performWithDelay(10,
+										   function ()
+											  theCircle:removeSelf()
+										   end, 1)
+
+					myCircle.gravityScale = 40
+					circlesGroup:insert(myCircle)		
+					sceneGroup:insert( myCircle )
+					
+					lives = lives - 1
+					myText.text = "Lives: "..lives
+					stopMakeItBiggerTimer()
+					
+					if (lives) <= 0 then
+						myText.text = "Game over"
+						
+						_L = 1
+						stopVelocityTimer()
+						startGameoverTimerFail()
+					end
+					
+					filling = filling + (myCircle.contentWidth/2)*(myCircle.contentWidth/2)*3.14*0
+					if (z/filling) <= 1.5 then
+						myFillingText.text = "You Won"
+						
+						
+						_L = _L + 1
+						
+						stopVelocityTimer()
+						startGameoverTimerWin()								
+					else					
+						myFillingText.text = "Filling: "..(string.format("%.0f", (filling/z*100))).."%"
+					end
+					myCircle:removeEventListener( "collision", myCircle)
+									
+					myCircle = nil	
+						
+				end
+			end, 1)		
+		end	
+			
+			
+			
 			
 	background:addEventListener("touch", circleGenerator)
 	startVelocityTimer()	
