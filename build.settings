@@ -19,7 +19,7 @@ settings =
 	{
 		-- Include only the necessary icon files on each platform
 		iphone = { "Icon-*dpi.png", },
-		android = { "circ1.png", "Icon-Small-*.png", "Icon*@2x.png", },
+		android = { "Icon.png", "Icon-Small-*.png", "Icon*@2x.png", },
 	},
 
 	--
@@ -35,7 +35,7 @@ settings =
 
 			CFBundleIconFiles =
 			{
-				"circ1.png",
+				"Icon.png",
 				"Icon@2x.png",
 				"Icon-60.png",
 				"Icon-60@2x.png",

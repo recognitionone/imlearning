@@ -1,21 +1,12 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
-local score = require( "score" )
+composer.recycleOnSceneChange = true
 
-local scoreText = score.init({
-   x = display.contentCenterX,
-   y = -1000,
-   maxDigits = 3,
-   leadingZeros = false,
-   filename = "scorefile.txt",
-   alpha = 0,
-})
 
 local image, textRed
 
 local _W = display.contentWidth
 local _H = display.contentHeight
-
 
 
 local function onSceneTouch2( self, event )
@@ -25,14 +16,19 @@ local function onSceneTouch2( self, event )
 	end
 end
 
+local function onSceneTouch3( self, event )
+	if event.phase == "began" then		
+			native.requestExit()				
+	end
+end
+
 local textField
 local textScoreField
 
 local bestscore
 
 function scene:create( event )
-	
-	bestscore = score.get()
+
 	local sceneGroup = self.view
 	
 	image = display.newCircle( _W/2-60, _H/2, _H )
@@ -53,6 +49,9 @@ function scene:create( event )
 	image3 = display.newCircle( _W/2+160, _H/2-80, 30 )
 	image3:setFillColor(0.3, 1, 0.3)
 	sceneGroup:insert( image3 )
+	image3.touch = onSceneTouch3
+	textRed3 = display.newText("Exit", _W/2+160, _H/2-80, "Track", 10)
+	sceneGroup:insert( textRed3 )
 	
 end
 
@@ -64,8 +63,9 @@ function scene:show( event )
 		
 		image:addEventListener( "touch", image )
 		image2:addEventListener( "touch", image2 )
+		image3:addEventListener( "touch", image3 )
 		
-		local myScoreText = "Your score: "..score.get()
+		local myScoreText = "Your score: ".._P
 
 		local optionsScore = {
 		   text = myScoreText,
@@ -74,19 +74,15 @@ function scene:show( event )
 		   width = 320,
 		   height = 300,
 		   font = "Track",
-		   fontSize = 20,
+		   fontSize = 10,
 		   align = "left"
 		}
 
 		textScoreField = display.newText( optionsScore )
 		textScoreField:setFillColor( 1, 1, 1 )
 		sceneGroup:insert( textScoreField )
-		
-		
+				
 		local z = math.random(0,21)
-		
-		
-		
 		
 		local myText = "small green balls are better than you"
 
@@ -161,9 +157,11 @@ function scene:hide( event )
 	if "will" == phase then
 		image:removeEventListener( "touch", image )
 		image2:removeEventListener( "touch", image2 )
+		image3:removeEventListener( "touch", image3 )
+		
 		textField.text = nil
 		textScoreField.text = nil
-		score.set(0)
+		
 	end			
 end
 

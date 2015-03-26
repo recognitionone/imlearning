@@ -1,27 +1,10 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
-local score = require( "score" )
-local level = require( "level" )
+composer.recycleOnSceneChange = true
+
 
 local _W = display.contentWidth
 local _H = display.contentHeight
-
-local scoreText = score.init({
-   x = display.contentCenterX,
-   y = -10,
-   maxDigits = 3,
-   leadingZeros = false,
-   filename = "scorefile.txt",
-})
-
-local levelText = level.init({
-   x = display.contentCenterX,
-   y = -1000,
-   maxDigits = 3,
-   leadingZeros = false,
-   filename = "levelfile.txt",
-})
-
 
 local function onSceneTouch2( self, event )
 	if event.phase == "began" then		
@@ -40,22 +23,25 @@ function scene:create( event )
 	points =  event.params.numPoints
 	local sceneGroup = self.view
 	
-	image = display.newCircle( _W/2-100, _H/2, _H+50 )
+	image = display.newCircle( _W/2, _H/2, _H+150 )
 	image:setFillColor(0/255,137/255,166/255)
 	sceneGroup:insert( image )
 	image.touch = onSceneTouch2
 	
-	local myText = "Level "..level.get().."\n\n".."Last level score: "..points.."\n".."Total score: "..score.get().."\n".."Tap to continue..."
+	local myGreatText = display.newText("You are great! :D", _W/2, _H/2-60, "Track", 30)
+	sceneGroup:insert( myGreatText )
+	
+	local myText = "Next Level: ".._L.."\n\n".."Last level score: "..points.."\n".."Total score: ".._P.."\n\n".."Tap to continue..."
 
 	local options = {
 	   text = myText,
 	   x = _W/2,
-	   y = _H/2+90,
+	   y = _H/2+140,
 	   width = 320,
 	   height = 300,
 	   font = "Track",
-	   fontSize = 20,
-	   align = "left"
+	   fontSize = 15,
+	   align = "center"
 	}
 	
 	textField = display.newText( options )
@@ -68,13 +54,11 @@ end
 function scene:show( event )
 	local phase = event.phase
 	if "did" == phase then
-		--composer.removeScene( "scene2" )
+		composer.removeScene( "scene2" )
 		
-		--composer.destroyScene( "scene2" )
-		composer.removeHidden()
 		points =  event.params.numPoints
 		
-		textField.text = "Level "..level.get().."\n\n".."Last level score: "..points.."\n".."Total score: "..score.get().."\n".."Tap to continue..."
+		textField.text = "Next Level: ".._L.."\n\n".."Last level score: "..points.."\n".."Total score: ".._P.."\n\n".."Tap to continue..."
 		image:addEventListener( "touch", image )
 		
 		
@@ -91,7 +75,6 @@ function scene:hide( event )
 end
 
 function scene:destroy( event )
-composer.removeHidden(true)
 end
 
 ---------------------------------------------------------------------------------

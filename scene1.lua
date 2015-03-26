@@ -1,15 +1,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
-local score = require( "score" )
 
-local scoreText = score.init({
-   x = display.contentCenterX,
-   y = -1000,
-   maxDigits = 3,
-   leadingZeros = false,
-   alpha = 0,
-   filename = "scorefile.txt",
-})
+composer.recycleOnSceneChange = true
 
 local _W = display.contentWidth
 local _H = display.contentHeight
@@ -49,9 +41,13 @@ function scene:show( event )
 local sceneGroup = self.view
 	local phase = event.phase
 	if "did" == phase then
-		composer.removeScene( "scene4" )		
+		composer.removeScene( "scene4" )	
+		
 		backgroundCircle:addEventListener( "touch", backgroundCircle )		
-		score.set(0)
+		
+		_G = 0
+		_P = 0
+		_L = 1
 	end
 end
 
@@ -59,6 +55,7 @@ function scene:hide( event )
 	local phase = event.phase
 	if "will" == phase then
 		backgroundCircle:removeEventListener( "touch", backgroundCircle )
+		backgroundCircle:removeSelf()
 	end
 end
 

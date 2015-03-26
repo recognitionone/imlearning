@@ -1,45 +1,30 @@
----------------------------------------------------
+
+
+-------------------------------------
 ---game--------------------------------------------
 ---------------------------------------------------
 
 
 local composer = require( "composer" )
 local scene = composer.newScene()
-local score = require( "score" )
-local level = require( "level" )
 
 local physics = require "physics"
 system.setIdleTimer( false )
 
 physics.start()
-physics.setGravity(0, -0.98)
+
+physics.setGravity(0, -0.098)
 physics.setDrawMode("normal")
-physics.setPositionIterations( 16 )
-physics.setVelocityIterations( 6 )
+physics.setPositionIterations( 8 )
+physics.setVelocityIterations( 3 )
 physics.setAverageCollisionPositions( true )
-physics.setScale( 60 )
+physics.setScale( 30 )
 physics.setContinuous(true)
+physics.setDebugErrorsEnabled(true)
+composer.recycleOnLowMemory = true
+composer.recycleOnSceneChange = true
 
 
----------------------------------------------------
--------------------
----------------------------------------------------
-
-local scoreText = score.init({
-   x = display.contentCenterX,
-   y = -1000,
-   maxDigits = 3,
-   leadingZeros = false,
-   filename = "scorefile.txt",
-})
-
-local levelText = level.init({
-   x = display.contentCenterX,
-   y = -10,
-   maxDigits = 3,
-   leadingZeros = false,
-   filename = "levelfile.txt",
-})
 
 ---------------------------------------------------
 ---local variables---------------------------------
@@ -48,11 +33,9 @@ local levelText = level.init({
 local _W = display.contentWidth
 local _H = display.contentHeight
 
-levelNum = level.get()
-
-local lives = levelNum + 3
-local circles = levelNum + 12
-local numBalls = levelNum + 1
+local lives = _L + 3
+local circles = _L + 12
+local numBalls = _L + 1
 local filling = 0
 local z = (_W-20)*(_H-20)
 
@@ -64,9 +47,9 @@ local myCircle, circlesGroup, background
 ---------------------------------------------------
 
 local function gameover(self, event)
-
-			score.add(circles + lives)	
-			
+	
+			_G = _G + circles + lives
+			_P = _P + circles + lives 
 			composer.gotoScene( "scene3", {
 			effect = "fade",
 			time = 100,
@@ -116,7 +99,7 @@ end
 
 function startGameoverTimerWin()
 	if gameoverTimerWin == nil then
-		gameoverTimerWin = timer.performWithDelay(30, gameover, -1)
+		gameoverTimerWin = timer.performWithDelay(30, gameover, 1)
 	end
 end
 
@@ -129,7 +112,7 @@ end
 	
 function startGameoverTimerFail()
 	if gameoverTimerFail == nil then
-		gameoverTimerFail = timer.performWithDelay(30, gameover2, -1)
+		gameoverTimerFail = timer.performWithDelay(30, gameover2, 1)
 	end
 end
 
@@ -162,6 +145,13 @@ end
 ---------------------------------------------------
 
 function scene:create( event )
+
+
+physics.stop()
+physics.start()
+physics.setGravity(0, -1)
+
+
 	local sceneGroup = self.view
 		
 	background = display.newRect(_W/2, _H/2, _W, _H*2)
@@ -205,7 +195,7 @@ function scene:create( event )
 	myFillingText:setFillColor( 0, 0, 0 )
 	sceneGroup:insert( myFillingText )
 
-	local levelText = display.newText("Level: "..levelNum, 160, 10, "Track", 14)
+	local levelText = display.newText("Level: ".._L, 160, 10, "Track", 14)
 	levelText:setFillColor(0,0,0)
 	sceneGroup:insert(levelText)
 
@@ -223,59 +213,55 @@ function scene:create( event )
 ---creating blue balls-----------------------------
 ---------------------------------------------------
 
-
 	local myCircle
-
+	local groupOfBalls = display.newGroup()
+	sceneGroup:insert( groupOfBalls )	
+	local collection1 = {} 
+	circlesGroup = display.newGroup()
+	sceneGroup:insert( circlesGroup )
+	
 	function onLocalCollision( self, event )
 		if myCircle ~= nil then
 			if ( event.phase == "began" ) then
-				if (event.other.name == "mc") then
-					
-					self:removeSelf()
-					myCircle = nil
-					lives = lives - 1
-					
-					if lives <= 0 then
-						myText.text = "Game over"
-						level.set(1)
-												
-						stopMakeItBiggerTimer()						
-						stopVelocityTimer()				
-						startGameoverTimerFail()
-						
-					else
-					
-						myText.text = "Lives: "..lives
-						
-					end
-				else					
-				
+				if event.other.name == "myC" then
 					stopGrowing()
-					removeCircle()
-				end		
+				else
+				
+					lives = lives - 1
+					myText.text = "Lives: "..lives
+					if myCircle == nil then
+						print("nil circle")
+					end
+					timer.performWithDelay(10, function()
+													if myCircle ~= nil then
+														myCircle:removeSelf()
+														myCircle = nil
+													end
+												end, 1)
+				end
 			end
 		end
 	end
-
-	circlesGroup = display.newGroup()
+	
 	
 	function circleGenerator( event)		
 		if event.phase == "began" then		
 			
 			myCircle = display.newImageRect("circleblue.png", 10, 10, 10, 20)
+			
+						
+			circlesGroup:insert(myCircle)
 			myCircle.collision = onLocalCollision	
 			myCircle:addEventListener( "collision", myCircle)		
 			myCircle.x = event.x
 			myCircle.y = event.y	
-
-			myCircle.anchorX = 0.5
-			myCircle.anchorY = 0.5			
-			
+								
 			myCircle.gravityScale = 0	
 			myCircle.name = "myC"	
-			physics.addBody(myCircle, "dynamic", {friction = 0, density = 300, bounce = 0.3, radius = myCircle.contentWidth/2})	
+			physics.addBody(myCircle, "dynamic", {friction = 0, density = 3, bounce = 0.3, radius = myCircle.contentWidth/2})	
 			
 			startMakeItBiggerTimer()
+			
 		elseif event.phase == "moved" then
 		
 			if myCircle ~= nil then
@@ -286,12 +272,16 @@ function scene:create( event )
 			end
 			
 		elseif event.phase == "ended" then	
+			
 			stopMakeItBiggerTimer()
 			stopGrowing()
+			
 			removeCircle()
+			
 		end
 		return true
 	end
+	
 ---------------------------------------------------
 ---creating green balls----------------------------
 ---------------------------------------------------
@@ -300,20 +290,17 @@ function scene:create( event )
 	local function newMovingCircle (params1)
 	
 		local movingCircle = display.newCircle( params1.xpos, params1.ypos, 10)
-		physics.addBody(movingCircle, "dynamic", { friction = 0, density = 0.001, bounce = 1,radius = movingCircle.contentWidth/2})
+		physics.addBody(movingCircle, "dynamic", { friction = 0, density = 0, bounce = 1,radius = movingCircle.contentWidth/2})
 		movingCircle.gravityScale = 0
 		movingCircle:setLinearVelocity( math.random(-130, 130), math.random(-130, 130))
 		movingCircle:setFillColor(0.3, 1, 0.3)
 		movingCircle.name = "mc"
-		
+				
 		return movingCircle
 	end
 
 
-	local groupOfBalls = display.newGroup()
-	sceneGroup:insert( groupOfBalls )
-	
-	local collection1 = {} 
+
 	for  i = 1,numBalls,1 do	
 		local movingCircle = newMovingCircle({xpos = _W/2+math.random(-130,130), ypos = _H/2+math.random(-130,130), xmove = 0.5, ymove = 0.5})
 		collection1[#collection1 + 1] = movingCircle
@@ -399,26 +386,26 @@ function scene:create( event )
 	function stopGrowing()		
 			timer.performWithDelay(1, function ()
 				if myCircle ~= nil then
-                                        myCircle.bodyType = "static"
+					myCircle.bodyType = "static"
 
-                                        local theCircle = myCircle
-                                        timer.performWithDelay(10,
-                                                               function ()
-                                                                  theCircle.bodyType = "dynamic"
-                                                               end, 1)
+					local theCircle = myCircle
+					timer.performWithDelay(10,
+										   function ()
+											  theCircle.bodyType = "dynamic"
+										   end, 1)
 
-					myCircle.gravityScale = 27
+					myCircle.gravityScale = 40
 					circlesGroup:insert(myCircle)		
 					sceneGroup:insert( myCircle )
-					myCircle:removeEventListener( "collision", myCircle)
+					
 					circles = circles - 1
 					circlesText.text = "Circles: "..circles
 					stopMakeItBiggerTimer()
 					
 					if (circles) <= 0 then
 						circlesText.text = "Game over"
-						level.set(1)
 						
+						_L = 1
 						stopVelocityTimer()
 						startGameoverTimerFail()
 					end
@@ -427,29 +414,23 @@ function scene:create( event )
 					if (z/filling) <= 1.5 then
 						myFillingText.text = "You Won"
 						
-						level.add(1)
-											
+						
+						_L = _L + 1
+						
 						stopVelocityTimer()
 						startGameoverTimerWin()								
 					else					
 						myFillingText.text = "Filling: "..(string.format("%.0f", (filling/z*100))).."%"
 					end
-					
+					myCircle:removeEventListener( "collision", myCircle)
 					myCircle = nil	
-							
+						
 				end
 			end, 1)		
 		end	
 			
----------------------------------------------------
----timers: starts and stops------------------------
----------------------------------------------------			
-
 	background:addEventListener("touch", circleGenerator)
-		startVelocityTimer()
-	
-
-	
+	startVelocityTimer()	
 end
 
 
@@ -459,7 +440,9 @@ function scene:show( event )
 	local phase = event.phase
 	if "did" == phase then
 		composer.removeScene( "scene1" )
-
+		composer.removeScene( "scene3" )
+		composer.removeScene( "scene4" )
+				
 	end
 end
 
@@ -470,7 +453,7 @@ function scene:hide( event )
 	if "will" == phase then
 		collection1 = {}
 		groupOfBalls = nil
-		score.save()
+		
 		removeCircle()
 		removeCircles()
 		stopGameoverTimerWin()
@@ -478,14 +461,12 @@ function scene:hide( event )
 		stopMakeItBiggerTimer()
 		stopVelocityTimer()
 		background:removeEventListener("touch", circleGenerator)
+		background:removeSelf()
 		
 	end
 end
 
-function scene:destroy( event )
-	local sceneGroup = self.view
-	removeCircles()
-	
+function scene:destroy( event )	
 end
 
 ---------------------------------------------------------------------------------
