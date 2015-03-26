@@ -54,8 +54,9 @@ end
 function scene:show( event )
 	local phase = event.phase
 	if "did" == phase then
-		composer.removeScene( "scene2" )
-		
+	--purgeScene()
+		--composer.removeScene( "scene2" )
+		composer.purgeScene( "scene2" )
 		points =  event.params.numPoints
 		
 		textField.text = "Next Level: ".._L.."\n\n".."Last level score: "..points.."\n".."Total score: ".._P.."\n\n".."Tap to continue..."

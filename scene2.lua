@@ -13,7 +13,7 @@ system.setIdleTimer( false )
 
 physics.start()
 
-physics.setGravity(0, -0.098)
+
 physics.setDrawMode("normal")
 physics.setPositionIterations( 8 )
 physics.setVelocityIterations( 3 )
@@ -238,9 +238,9 @@ physics.setGravity(0, -1)
 	function circleGenerator( event)		
 		if event.phase == "began" then		
 			
-			myCircle = display.newImageRect("circleblue.png", 10, 10, 10, 20)
+			myCircle = display.newImageRect("circleblue.png", 10, 10, 300, 300)
 									
-			circlesGroup:insert(myCircle)
+			
 			myCircle.collision = onLocalCollision	
 			myCircle:addEventListener( "collision", myCircle)		
 			myCircle.x = event.x
@@ -302,6 +302,12 @@ physics.setGravity(0, -1)
 		for  i = 1,numBalls,1 do	
 			
 			local vx, vy = collection1[i]:getLinearVelocity()
+			if vx == 0 and vy == 0 then
+				vx = 1
+				vy = 1
+			end
+			
+			
 			collection1[i]:setLinearVelocity((167/math.sqrt((vx*vx)+(vy*vy))*vx), (167/math.sqrt((vx*vx)+(vy*vy))*vy))
 			
 		end	
@@ -341,10 +347,10 @@ physics.setGravity(0, -1)
 	end
 	
 	function makeItBigger(event)
-			timer.performWithDelay(20, makeItBiggerStage0, 3)
-			timer.performWithDelay(20, makeItBiggerStage1, 20)
-			timer.performWithDelay(20, makeItBiggerStage2, 100)
-			timer.performWithDelay(20, makeItBiggerStage3, 1000)
+			timer1 = timer.performWithDelay(20, makeItBiggerStage0, 3)
+			timer2 = timer.performWithDelay(20, makeItBiggerStage1, 20)
+			timer3 = timer.performWithDelay(20, makeItBiggerStage2, 100)
+			timer4 = timer.performWithDelay(20, makeItBiggerStage3, 1000)
 	end
 	
 	function makeItBigger1(event)
@@ -388,7 +394,7 @@ physics.setGravity(0, -1)
 					circlesGroup:insert(myCircle)		
 					sceneGroup:insert( myCircle )
 					
-					circles = circles-- - 1
+					circles = circles - 1
 					circlesText.text = "Circles: "..circles
 					stopMakeItBiggerTimer()
 					
@@ -422,20 +428,21 @@ physics.setGravity(0, -1)
 		function stopGrowingAndDisappear()		
 			timer.performWithDelay(1, function ()
 				if myCircle ~= nil then
-					myCircle.bodyType = "static"
-
+					
 					local theCircle = myCircle
 					timer.performWithDelay(10,
 										   function ()
 											  theCircle:removeSelf()
 										   end, 1)
 
-					myCircle.gravityScale = 40
+					
 					circlesGroup:insert(myCircle)		
 					sceneGroup:insert( myCircle )
 					
 					lives = lives - 1
 					myText.text = "Lives: "..lives
+					
+					
 					stopMakeItBiggerTimer()
 					
 					if (lives) <= 0 then
@@ -445,19 +452,7 @@ physics.setGravity(0, -1)
 						stopVelocityTimer()
 						startGameoverTimerFail()
 					end
-					
-					filling = filling + (myCircle.contentWidth/2)*(myCircle.contentWidth/2)*3.14*0
-					if (z/filling) <= 1.5 then
-						myFillingText.text = "You Won"
-						
-						
-						_L = _L + 1
-						
-						stopVelocityTimer()
-						startGameoverTimerWin()								
-					else					
-						myFillingText.text = "Filling: "..(string.format("%.0f", (filling/z*100))).."%"
-					end
+
 					myCircle:removeEventListener( "collision", myCircle)
 									
 					myCircle = nil	
