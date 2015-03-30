@@ -1,3 +1,5 @@
+-- this will be true hardcore mode
+
 
 
 -------------------------------------
@@ -35,17 +37,8 @@ local _H = display.contentHeight
 
 local lives = 4
 
-local circles
-if _L <= 7 then
-	circles = _L + 6
-elseif _L > 7 and _L <= 15 then
-	circles = _L
-else
-	circles = 19
-end
+local circles = 9
 	
-
-
 local numBalls = _L + 1
 local filling = 0
 local z = (_W-20)*(_H-20)
@@ -59,12 +52,12 @@ local myCircle, circlesGroup, background
 
 local function gameover(self, event)
 	
+			_L = _L + 1
 			_G = _G + circles + lives
 			_P = _P + circles + lives 
-			_L = _L + 1
-			composer.gotoScene( "scene3", {
+			composer.gotoScene( "scene10", {
 			effect = "fade",
-			time = 100,			
+			time = 100,		
 			})
 	
 end
@@ -161,10 +154,11 @@ physics.stop()
 physics.start()
 physics.setGravity(0, -1)
 
+
 	local sceneGroup = self.view
 		
 	background = display.newRect(_W/2, _H/2, _W, _H*2)
-	background:setFillColor(0/255,137/255,166/255)
+	background:setFillColor (0,35/255,41/255)
 	sceneGroup:insert( background )
 
 ---------------------------------------------------
@@ -196,20 +190,20 @@ physics.setGravity(0, -1)
 ---texts-------------------------------------------
 ---------------------------------------------------
 	
-	local myText = display.newText( "Lives: "..lives, 60, 12, "Track", 14 )
-	myText:setFillColor( 0, 0, 0 )
+	local myText = display.newText( "Lives: "..lives, 60, 10, "Track", 14 )
+	myText:setFillColor( 1,1,1)
 	sceneGroup:insert( myText )
 
-	local myFillingText = display.newText( "Filling: "..(string.format("%.0f", filling)).."%", 400, 12, "Track", 14 )
-	myFillingText:setFillColor( 0, 0, 0 )
+	local myFillingText = display.newText( "Filling: "..(string.format("%.0f", filling)).."%", 400, 10, "Track", 14 )
+	myFillingText:setFillColor( 1,1,1)
 	sceneGroup:insert( myFillingText )
 
-	local levelText = display.newText("Level: ".._L, 160, 12, "Track", 14)
-	levelText:setFillColor(0,0,0)
+	local levelText = display.newText("Level: ".._L, 160, 10, "Track", 14)
+	levelText:setFillColor(1,1,1)
 	sceneGroup:insert(levelText)
 
-	local circlesText = display.newText("Circles: "..circles, 270, 12, "Track", 14)
-	circlesText:setFillColor(0,0,0)
+	local circlesText = display.newText("Circles: "..circles, 270, 10, "Track", 14)
+	circlesText:setFillColor(1,1,1)
 	circlesText.align = "left"
 	sceneGroup:insert(circlesText)
 
@@ -233,9 +227,11 @@ physics.setGravity(0, -1)
 		if myCircle ~= nil then
 			if ( event.phase == "began" ) then
 				if event.other.name == "myC" then
-					stopGrowing()					
+					stopGrowing()
+					
 				else
 					stopGrowingAndDisappear()
+
 				end
 			end
 		end
@@ -315,7 +311,7 @@ physics.setGravity(0, -1)
 			end
 			
 			
-			collection1[i]:setLinearVelocity((167/math.sqrt((vx*vx)+(vy*vy))*vx), (167/math.sqrt((vx*vx)+(vy*vy))*vy))
+			collection1[i]:setLinearVelocity((167*2.5/math.sqrt((vx*vx)+(vy*vy))*vx), (167*2.5/math.sqrt((vx*vx)+(vy*vy))*vy))
 			
 		end	
 	end
@@ -408,20 +404,20 @@ physics.setGravity(0, -1)
 
 					
 					filling = filling + (myCircle.contentWidth/2)*(myCircle.contentWidth/2)*3.14
-					if (z/filling) <= 1.5 and circles > -1 and lives > -1 then
-						myFillingText.text = "You Won"												
+					if (z/filling) <= 1.5 and circles > -1 then
+						myFillingText.text = "You Won"
+						
 						stopVelocityTimer()
 						startGameoverTimerWin()	
-						
+
 					elseif (circles) == 0 then
-						circlesText.text = "Game over"	
-						
+						circlesText.text = "Game over"												
 						stopVelocityTimer()
 						startGameoverTimerFail()
 					
-					
-					
-					else
+
+						
+					else					
 						myFillingText.text = "Filling: "..(string.format("%.0f", (filling/z*100))).."%"
 					end
 					myCircle:removeEventListener( "collision", myCircle)
@@ -446,11 +442,15 @@ physics.setGravity(0, -1)
 					sceneGroup:insert( myCircle )
 					
 					lives = lives - 1
-					myText.text = "Lives: "..lives										
+					myText.text = "Lives: "..lives
+					
+					
 					stopMakeItBiggerTimer()
 					
 					if (lives) == 0 then
-						myText.text = "Game over"												
+						myText.text = "Game over"
+						
+						
 						stopVelocityTimer()
 						startGameoverTimerFail()
 					end
@@ -476,9 +476,8 @@ function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
 	if "did" == phase then
-		composer.removeScene( "scene1" )
-		composer.removeScene( "scene3" )
-		composer.removeScene( "scene4" )
+		composer.removeScene( "scene8" )
+		
 				
 	end
 end

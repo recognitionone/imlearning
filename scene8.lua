@@ -8,18 +8,23 @@ local _H = display.contentHeight
 
 local function onSceneTouch2( self, event )
 	if event.phase == "began" then		
-		composer.gotoScene( "scene2", "fade", 100  )		
+		composer.gotoScene( "scene7", "fade", 100  )		
 		return true
 	end
 end
 
 local image
 
-function scene:create( event )	
+
+
+
+
+function scene:create( event )
+	
 	local sceneGroup = self.view
 	
 	image = display.newCircle( _W/2, _H/2, _H+150 )
-	image:setFillColor(0/255,137/255,166/255)
+	image:setFillColor (0/255,69/255,83/255)
 	sceneGroup:insert( image )
 	image.touch = onSceneTouch2
 	
@@ -41,18 +46,23 @@ function scene:create( event )
 	
 	textField = display.newText( options )
 	textField:setFillColor( 1, 1, 1 )
-	sceneGroup:insert( textField )	
+	sceneGroup:insert( textField )
+
+	
 end
 
 function scene:show( event )
 	local phase = event.phase
 	if "did" == phase then
-	
-		composer.removeScene( "scene2" )
+	--purgeScene()
+		composer.removeScene( "scene7" )
+		
+		
 		
 		textField.text = "Next Level: ".._L.."\n\n".."Last level score: ".._G.."\n".."Total score: ".._P.."\n\n".."Tap to continue..."
 		image:addEventListener( "touch", image )
-				
+		
+		
 	end
 end
 

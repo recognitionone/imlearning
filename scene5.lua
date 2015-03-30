@@ -1,4 +1,4 @@
-
+--baby mode
 
 -------------------------------------
 ---game--------------------------------------------
@@ -62,7 +62,7 @@ local function gameover(self, event)
 			_G = _G + circles + lives
 			_P = _P + circles + lives 
 			_L = _L + 1
-			composer.gotoScene( "scene3", {
+			composer.gotoScene( "scene6", {
 			effect = "fade",
 			time = 100,			
 			})
@@ -163,8 +163,10 @@ physics.setGravity(0, -1)
 
 	local sceneGroup = self.view
 		
-	background = display.newRect(_W/2, _H/2, _W, _H*2)
-	background:setFillColor(0/255,137/255,166/255)
+	background = display.newImageRect("spacething.png", _W, _H+90)
+	background.x = _W/2
+	background.y = _H/2
+	--background:setFillColor(0/255,137/255,166/255)
 	sceneGroup:insert( background )
 
 ---------------------------------------------------
@@ -245,7 +247,7 @@ physics.setGravity(0, -1)
 	function circleGenerator( event)		
 		if event.phase == "began" then		
 			
-			myCircle = display.newImageRect("circleblue.png", 10, 10, 300, 300)
+			myCircle = display.newImageRect("circlepink.png", 10, 10, 300, 300)
 									
 			
 			myCircle.collision = onLocalCollision	
@@ -287,10 +289,10 @@ physics.setGravity(0, -1)
 	local function newMovingCircle (params1)
 	
 		local movingCircle = display.newCircle( params1.xpos, params1.ypos, 10)
-		physics.addBody(movingCircle, "dynamic", { friction = 0, density = 0, bounce = 1,radius = movingCircle.contentWidth/2})
+		physics.addBody(movingCircle, "dynamic", { friction = 0, density = 0, bounce = 1,radius = 5})
 		movingCircle.gravityScale = 0
 		movingCircle:setLinearVelocity( math.random(-130, 130), math.random(-130, 130))
-		movingCircle:setFillColor(0.3, 1, 0.3)
+		--movingCircle:setFillColor(0.3, 1, 0.3)
 		movingCircle.name = "mc"
 				
 		return movingCircle
@@ -299,7 +301,7 @@ physics.setGravity(0, -1)
 
 
 	for  i = 1,numBalls,1 do	
-		local movingCircle = newMovingCircle({xpos = _W/2+math.random(-130,130), ypos = _H/2+math.random(-130,130), xmove = 0.5, ymove = 0.5})
+		local movingCircle = newMovingCircle({xpos = _W/2+math.random(-30,30), ypos = _H/2+math.random(-30,30), xmove = 0.5, ymove = 0.5})
 		collection1[#collection1 + 1] = movingCircle
 		groupOfBalls:insert(movingCircle)
 	end
@@ -401,7 +403,7 @@ physics.setGravity(0, -1)
 					circlesGroup:insert(myCircle)		
 					sceneGroup:insert( myCircle )
 					
-					circles = circles - 1
+					--circles = circles - 1
 					circlesText.text = "Circles: "..circles
 					stopMakeItBiggerTimer()
 					
@@ -445,7 +447,7 @@ physics.setGravity(0, -1)
 					circlesGroup:insert(myCircle)		
 					sceneGroup:insert( myCircle )
 					
-					lives = lives - 1
+					--lives = lives - 1
 					myText.text = "Lives: "..lives										
 					stopMakeItBiggerTimer()
 					
@@ -477,7 +479,7 @@ function scene:show( event )
 	local phase = event.phase
 	if "did" == phase then
 		composer.removeScene( "scene1" )
-		composer.removeScene( "scene3" )
+		composer.removeScene( "scene6" )
 		composer.removeScene( "scene4" )
 				
 	end

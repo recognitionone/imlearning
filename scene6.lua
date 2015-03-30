@@ -8,7 +8,7 @@ local _H = display.contentHeight
 
 local function onSceneTouch2( self, event )
 	if event.phase == "began" then		
-		composer.gotoScene( "scene2", "fade", 100  )		
+		composer.gotoScene( "scene5", "fade", 100  )		
 		return true
 	end
 end
